@@ -18,7 +18,7 @@ Gitane is available in NPM. `npm install gitane`
 
 Example
 =======
-```
+```javascript
   var fs = require('fs')
   var gitane = require('gitane')
   var path = require('path')
