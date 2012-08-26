@@ -9,39 +9,50 @@ var Step = require('step')
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
 'exec ssh -i $key -o StrictHostKeyChecking=no "$$@"\n'
 
+function mkTempFile(prefix, suffix) {
+    var randomStr = crypto.randomBytes(4).toString('hex')
+    var name = prefix + randomStr + suffix
+    var file = path.join(os.tmpDir(), name)
+
+    return file
+}
+
 //
 // Write the Git script template to enable use of the SSH private key
 //
 // *privKey* SSH private key.
 // *file* (optional) filename of script.
-// *cb* callback function of signature function(err, filename).
+// *cb* callback function of signature function(err, tempateFile, keyFile).
 //
-function writeTemplate(privKey, file, cb) {
+function writeFiles(privKey, file, cb) {
   // No file name - generate a random one under the system temp dir
   if (!file) {
-    var randomStr = crypto.randomBytes(4).toString('hex')
-    var name = "_gitane" + randomStr + ".sh"
-    file = path.join(os.tmpDir(), name)
+    file = mkTempFile("_gitane", ".sh")
   }
+
+  var keyfile = mkTempFile("_gitaneid", ".key")
 
   var data = GIT_SSH_TEMPLATE.replace('$key', privKey)
   Step(
     function() {
-      fs.writeFile(file, data, this)
+      fs.writeFile(file, data, this.parallel())
+      fs.writeFile(keyfile, privKey, this.parallel())
     },
     function(err) {
       if (err) {
         return cb(err, null)
       }
       // make script executable
-      fs.chmod(file, 0755, this)
+      fs.chmod(file, 0755, this.parallel())
+      // make key secret
+      fs.chmod(keyfile, 0600, this.parallel())
     },
     function(err) {
       if (err) {
         return cb(err, null)
       }
 
-      return cb(null, file)
+      return cb(null, file, keyfile)
     }
   )
 }
@@ -59,15 +70,17 @@ function run(baseDir, privKey, cmd, cb) {
 
   Step(
     function() {
-      writeTemplate(privKey, null, this)
+      writeFiles(privKey, null, this)
     },
-    function(err, file) {
+    function(err, file, keyfile) {
       this.file = file
+      this.keyfile = keyfile
       exec(cmd, {cwd: baseDir, env: {GIT_SSH: file}}, this)
     },
     function(err, stdout, stderr) {
-      // cleanup temp file
+      // cleanup temp files
       fs.unlink(this.file)
+      fs.unlink(this.keyfile)
 
       cb(err, stdout, stderr)
 
@@ -85,6 +98,6 @@ function clone(args, baseDir, privKey, cb) {
 module.exports = {
   clone:clone,
   run:run,
-  writeTemplate:writeTemplate,
+  writeFiles:writeFiles,
 }
 

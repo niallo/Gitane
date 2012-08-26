@@ -29,18 +29,21 @@ describe('gitane', function() {
 
   }),
 
-  describe('#writeTemplate', function() {
+  describe('#writeFiles', function() {
 
     it('should create a random file if none specified', function(done) {
 
-      gitane.writeTemplate('testkey', null, function(err, file) {
+      gitane.writeFiles('testkey', null, function(err, file, keyfile) {
         expect(err).to.be.null
         expect(file).to.be.a('string')
         expect(file).to.match(/_gitane/)
-        var data = fs.readFileSync(file)
-        expect(data).to.match(/exec ssh -i testkey/)
+        var data = fs.readFileSync(file, 'utf8')
+        expect(data).to.match(/exec ssh -i/)
 
+        var key = fs.readFileSync(keyfile, 'utf8')
+        expect(key).to.eql('testkey')
         fs.unlinkSync(file)
+        fs.unlinkSync(keyfile)
 
         done()
       })
@@ -50,23 +53,26 @@ describe('gitane', function() {
     it('should use passed-in file if specified', function(done) {
       var filename = "_testfile"
 
-      gitane.writeTemplate('testkey', filename, function(err, file) {
+      gitane.writeFiles('testkey', filename, function(err, file, keyfile) {
         expect(file).to.eql(filename)
         expect(err).to.be.null
-        var data = fs.readFileSync(file)
-        expect(data).to.match(/exec ssh -i testkey/)
+        var data = fs.readFileSync(file, 'utf8')
+        expect(data).to.match(/exec ssh -i/)
+        var key = fs.readFileSync(keyfile, 'utf8')
+        expect(key).to.eql('testkey')
 
         fs.unlinkSync(file)
+        fs.unlinkSync(keyfile)
 
         done()
       })
 
     })
 
-    it('should create an executable file', function(done) {
+    it('should create an executable script and an 0600-mode key', function(done) {
       var filename = "_testfile"
 
-      gitane.writeTemplate('testkey', filename, function(err, file) {
+      gitane.writeFiles('testkey', filename, function(err, file, keyfile) {
         expect(file).to.eql(filename)
         expect(err).to.be.null
 
@@ -76,6 +82,13 @@ describe('gitane', function() {
         expect(stats.mode.toString(8)).to.eql('100755')
 
         fs.unlinkSync(file)
+
+        var stats = fs.statSync(keyfile)
+
+        // Note we must convert to octal ourselves.
+        expect(stats.mode.toString(8)).to.eql('100600')
+
+        fs.unlinkSync(keyfile)
 
         done()
       })
