@@ -10,9 +10,6 @@
     "url": "git://github.com/niallo/Gitane.git"
   },
   "main": "index.js",
-  "scripts": {
-    "test": "mocha -R tap"
-  },
   "dependencies": {
     "step": "~0.0.5"
   },
