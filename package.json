@@ -1,6 +1,6 @@
 {
   "author": "Niall O'Higgins <niallo@beyondfog.com> (http://niallohiggins.com)",
-  "name": "Gitane",
+  "name": "gitane",
   "description": "Easy Node.JS Git wrapper with support for SSH keys",
   "version": "0.0.0",
   "homepage": "https://github.com/niallo/Gitane",
@@ -20,7 +20,7 @@
     "chai": "~1.1.1"
   },
   "scripts": {
-    "test": "mocha -R tap"
+    "test": "./node_modules/mocha/bin/mocha -R tap"
   },
   "optionalDependencies": {},
   "engines": {
