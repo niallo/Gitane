@@ -5,6 +5,7 @@ var path = require('path')
 var os = require('os')
 var Step = require('step')
 
+// Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
 'exec ssh -i $key -o StrictHostKeyChecking=no "$$@"\n'
 
@@ -74,7 +75,16 @@ function run(baseDir, privKey, cmd, cb) {
   )
 }
 
+//
+// convenience wrapper for clone. maybe add more later.
+//
+function clone(args, baseDir, privKey, cb) {
+  run(baseDir, privKey, "git clone " + args, cb)
+}
+
 module.exports = {
+  clone:clone,
   run:run,
   writeTemplate:writeTemplate,
 }
+

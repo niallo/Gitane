@@ -84,9 +84,6 @@ describe('gitane', function() {
 
   })
 
-
-
-
 })
 
 
