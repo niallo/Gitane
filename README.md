@@ -10,8 +10,15 @@ variable must point to that script.
 Gitane wraps all this plumbing for you. Simply pass the SSH private key you wish to run Git with as a string argument and let Gitane do the rest.
 
 
+Installation
+============
+
+Gitane is available in NPM. `npm install gitane`
+
+
 Example
 =======
+```
   var gitane = require('gitane')
 
   gitane.run(process.cwd(), privKey, "git clone git@github.com:niallo/Gitane.git", function(err, stdout, stderr) {
@@ -22,3 +29,14 @@ Example
 
     console.log("Git clone complete!")
   })
+```
+
+Tests
+=====
+
+Gitane comes with tests. To run, simply execute `npm test`.
+
+License
+=======
+
+Gitane is released under a BSD license.
