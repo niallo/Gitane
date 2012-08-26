@@ -1,6 +1,8 @@
 Gitane
 ======
 
+![Gitane bicycle](http://farm4.staticflickr.com/3387/3593701411_2152a1cf73_z.jpg)
+
 Easy Node.JS Git wrapper with support for SSH keys. By default, the Git CLI
 tool will only use the SSH key of the current user (e.g. `$HOME/.ssh/id_dsa`).
 
@@ -48,3 +50,8 @@ License
 =======
 
 Gitane is released under a BSD license.
+
+Credits
+=======
+
+Picture of Gitane fixie CC-BY Herb Real from http://www.flickr.com/photos/herbrealphotography/3593701411/
