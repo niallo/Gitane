@@ -28,7 +28,7 @@ Example
   // Read private key from ~/.ssh/id_dsa
   var privKey = fs.readFileSync(path.join(process.env.HOME, '.ssh/id_dsa'), 'utf8')
 
-  gitane.run(baseDir, privKey, "git clone git@github.com:niallo/Gitane.git",
+  gitane.run(baseDir, privKey, "git clone git://github.com/niallo/Gitane.git",
     function(err, stdout, stderr) {
     if (err) {
       console.log("An error occurred: " + stderr)
