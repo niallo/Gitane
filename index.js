@@ -32,9 +32,8 @@ function writeTemplate(privKey, file, cb) {
       if (err) {
         return cb(err, null)
       }
-      // make executable
-      fs.chmod(file, '0755', this)
-
+      // make script executable
+      fs.chmod(file, 0755, this)
     },
     function(err) {
       if (err) {
@@ -47,15 +46,32 @@ function writeTemplate(privKey, file, cb) {
 }
 
 //
-// Run a `git` process
+// Run a command in a subprocess with GIT_SSH set to the correct value for
+// SSH key.
 //
 // *baseDir* current working dir from which to execute git
 // *privKey* SSH private key to use
 // *cmd* command to run
+// *cb* callback function of signature function(err, stdout, stderr)
 //
-function run(baseDir, privKey, cmd) {
+function run(baseDir, privKey, cmd, cb) {
 
+  Step(
+    function() {
+      writeTemplate(privKey, null, this)
+    },
+    function(err, file) {
+      this.file = file
+      exec(cmd, {cwd: baseDir, env: {GIT_SSH: file}}, this)
+    },
+    function(err, stdout, stderr) {
+      // cleanup temp file
+      fs.unlink(this.file)
 
+      cb(err, stdout, stderr)
+
+    }
+  )
 }
 
 module.exports = {
