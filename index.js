@@ -79,8 +79,10 @@ function run(baseDir, privKey, cmd, cb) {
     },
     function(err, stdout, stderr) {
       // cleanup temp files
-      fs.unlink(this.file)
-      fs.unlink(this.keyfile)
+      try {
+        fs.unlink(this.file)
+        fs.unlink(this.keyfile)
+      } catch(e) {}
 
       cb(err, stdout, stderr)
 
