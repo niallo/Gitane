@@ -69,7 +69,7 @@ describe('gitane', function() {
 
     })
 
-    it('should create an executable script and an 0600-mode key', function(done) {
+    it('should create an executable script and an 0600-mode key by default', function(done) {
       var filename = "_testfile"
 
       gitane.writeFiles('testkey', filename, function(err, file, keyfile) {
@@ -87,6 +87,32 @@ describe('gitane', function() {
 
         // Note we must convert to octal ourselves.
         expect(stats.mode.toString(8)).to.eql('100600')
+
+        fs.unlinkSync(keyfile)
+
+        done()
+      })
+
+    })
+
+    it('should create an executable script and honour keyMode param', function(done) {
+      var filename = "_testfile"
+
+      gitane.writeFiles('testkey', filename, 0744, function(err, file, keyfile) {
+        expect(file).to.eql(filename)
+        expect(err).to.be.null
+
+        var stats = fs.statSync(file)
+
+        // Note we must convert to octal ourselves.
+        expect(stats.mode.toString(8)).to.eql('100755')
+
+        fs.unlinkSync(file)
+
+        var stats = fs.statSync(keyfile)
+
+        // Note we must convert to octal ourselves.
+        expect(stats.mode.toString(8)).to.eql('100744')
 
         fs.unlinkSync(keyfile)
 

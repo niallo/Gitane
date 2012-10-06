@@ -22,12 +22,18 @@ function mkTempFile(prefix, suffix) {
 //
 // *privKey* SSH private key.
 // *file* (optional) filename of script.
+// *keyMode* (optional) mode of key.
 // *cb* callback function of signature function(err, tempateFile, keyFile).
 //
-function writeFiles(privKey, file, cb) {
+function writeFiles(privKey, file, keyMode, cb) {
   // No file name - generate a random one under the system temp dir
   if (!file) {
     file = mkTempFile("_gitane", ".sh")
+  }
+
+  if (typeof(keyMode) === 'function') {
+    cb = keyMode
+    keyMode = 0600
   }
 
   var keyfile = mkTempFile("_gitaneid", ".key")
@@ -45,7 +51,7 @@ function writeFiles(privKey, file, cb) {
       // make script executable
       fs.chmod(file, 0755, this.parallel())
       // make key secret
-      fs.chmod(keyfile, 0600, this.parallel())
+      fs.chmod(keyfile, keyMode, this.parallel())
     },
     function(err) {
       if (err) {
@@ -66,11 +72,15 @@ function writeFiles(privKey, file, cb) {
 // *cmd* command to run
 // *cb* callback function of signature function(err, stdout, stderr)
 //
-function run(baseDir, privKey, cmd, cb) {
+function run(baseDir, privKey, cmd, keyMode, cb) {
+  if (typeof(keyMode) === 'function') {
+    cb = keyMode
+    keyMode = 0600
+  }
 
   Step(
     function() {
-      writeFiles(privKey, null, this)
+      writeFiles(privKey, null, keyMode, this)
     },
     function(err, file, keyfile) {
       this.file = file
