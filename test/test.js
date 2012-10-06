@@ -121,6 +121,18 @@ describe('gitane', function() {
 
     })
 
+    it('should support env param for custom environment', function(done) {
+      var testkey = 'testkey'
+      var env = {foobar:"bar!"}
+
+      gitane.run(process.cwd(), testkey, env, 'env', function(err, stdout, stderr) {
+        expect(err).to.be.null
+        expect(stdout).to.match(/GIT_SSH=.*_gitane.*\.sh/)
+        expect(stdout).to.match(/foobar=bar!/)
+        done()
+      })
+    })
+
   })
 
 })

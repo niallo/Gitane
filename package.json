@@ -2,7 +2,7 @@
   "author": "Niall O'Higgins <niallo@beyondfog.com> (http://niallohiggins.com)",
   "name": "gitane",
   "description": "Easy Node.JS Git wrapper with support for SSH keys",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/niallo/Gitane",
   "keywords":["git", "ssh", "strider"],
   "repository": {
