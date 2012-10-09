@@ -69,23 +69,14 @@ function writeFiles(privKey, file, keyMode, cb) {
 //
 // *baseDir* current working dir from which to execute git
 // *privKey* SSH private key to use
-// *env* UNIX environment to inherit (optional)
 // *cmd* command to run
 // *cb* callback function of signature function(err, stdout, stderr)
 //
-function run(baseDir, privKey, env, cmd, keyMode, cb) {
+function run(baseDir, privKey, cmd, keyMode, cb) {
   if (typeof(keyMode) === 'function') {
     cb = keyMode
     keyMode = 0600
   }
-
-  if (typeof(cmd) === 'function') {
-    cb = cmd
-    cmd = env
-    keyMode = 0600
-    env = {}
-  }
-
 
   Step(
     function() {
@@ -94,8 +85,7 @@ function run(baseDir, privKey, env, cmd, keyMode, cb) {
     function(err, file, keyfile) {
       this.file = file
       this.keyfile = keyfile
-      env.GIT_SSH = file
-      exec(cmd, {cwd: baseDir, env: env}, this)
+      exec(cmd, {cwd: baseDir, env: {GIT_SSH: file}}, this)
     },
     function(err, stdout, stderr) {
       // cleanup temp files
