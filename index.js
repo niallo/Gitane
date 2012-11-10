@@ -5,6 +5,8 @@ var path = require('path')
 var os = require('os')
 var Step = require('step')
 
+var PATH = process.env.PATH
+
 // Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
 'exec ssh -i $key -o StrictHostKeyChecking=no "$@"\n'
@@ -85,7 +87,8 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     function(err, file, keyfile) {
       this.file = file
       this.keyfile = keyfile
-      exec(cmd, {cwd: baseDir, env: {GIT_SSH: file}}, this)
+      console.log("running with PATH: %s", PATH)
+      exec(cmd, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}}, this)
     },
     function(err, stdout, stderr) {
       // cleanup temp files
@@ -107,9 +110,14 @@ function clone(args, baseDir, privKey, cb) {
   run(baseDir, privKey, "git clone " + args, cb)
 }
 
+function addPath(str) {
+  PATH = PATH + ":" + str
+}
+
 module.exports = {
   clone:clone,
   run:run,
   writeFiles:writeFiles,
+  addPath:addPath,
 }
 
