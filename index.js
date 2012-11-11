@@ -16,6 +16,7 @@ function mkTempFile(prefix, suffix) {
     var name = prefix + randomStr + suffix
     var file = path.join(os.tmpDir(), name)
     // Hack for weird environments (nodejitsu didn't guarantee os.tmpDir() to already exist)
+    console.log("creating tmpDir")
     fs.mkdirSync(os.tmpDir())
 
     return file
