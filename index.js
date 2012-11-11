@@ -9,12 +9,14 @@ var PATH = process.env.PATH
 
 // Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
-'exec /usr/bin/ssh -i $key -o StrictHostKeyChecking=no "$@"\n'
+'exec ssh -i $key -o StrictHostKeyChecking=no "$@"\n'
 
 function mkTempFile(prefix, suffix) {
     var randomStr = crypto.randomBytes(4).toString('hex')
     var name = prefix + randomStr + suffix
     var file = path.join(os.tmpDir(), name)
+    // Hack for weird environments (nodejitsu didn't guarantee os.tmpDir() to already exist)
+    fs.mkdirSync(os.tmpDir())
 
     return file
 }
