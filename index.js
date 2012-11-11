@@ -9,6 +9,7 @@ var PATH = process.env.PATH
 
 // Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
+'export PATH=$PATH:/usr/bin:/opt/local/bin\n' +
 'exec ssh -i $key -o StrictHostKeyChecking=no "$@"\n'
 
 function mkTempFile(prefix, suffix) {
