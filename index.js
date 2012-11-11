@@ -43,6 +43,7 @@ function writeFiles(privKey, file, keyMode, cb) {
   var data = GIT_SSH_TEMPLATE.replace('$key', keyfile)
   Step(
     function() {
+      console.log("data: %s file: %s", data, file)
       fs.writeFile(file, data, this.parallel())
       fs.writeFile(keyfile, privKey, this.parallel())
     },
@@ -87,7 +88,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     function(err, file, keyfile) {
       this.file = file
       this.keyfile = keyfile
-      console.log("running with PATH: %s", PATH)
+      console.log("running cmd: %s with PATH: %s file: %s", cmd, PATH, file)
       exec(cmd, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}}, this)
     },
     function(err, stdout, stderr) {
