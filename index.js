@@ -86,6 +86,10 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       writeFiles(privKey, null, keyMode, this)
     },
     function(err, file, keyfile) {
+      if (err) {
+        console.log("Error writing files: %s", err)
+        return cb(err, null)
+      }
       this.file = file
       this.keyfile = keyfile
       console.log("running cmd: %s with PATH: %s file: %s", cmd, PATH, file)
