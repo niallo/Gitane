@@ -16,7 +16,6 @@ function mkTempFile(prefix, suffix) {
     var name = prefix + randomStr + suffix
     var file = path.join(os.tmpDir(), name)
     // Hack for weird environments (nodejitsu didn't guarantee os.tmpDir() to already exist)
-    console.log("creating tmpDir")
     try {
         fs.mkdirSync(os.tmpDir())
     } catch (e) {}
@@ -48,10 +47,8 @@ function writeFiles(privKey, file, keyMode, cb) {
   var data = GIT_SSH_TEMPLATE.replace('$key', keyfile)
   Step(
     function() {
-      console.log("data: %s file: %s", data, file)
       fs.writeFile(file, data, this.parallel())
       fs.writeFile(keyfile, privKey, this.parallel())
-      console.log("does os.tmpDir() exist: %s", fs.existsSync(os.tmpDir()))
     },
     function(err) {
       if (err) {
@@ -98,7 +95,6 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       }
       this.file = file
       this.keyfile = keyfile
-      console.log("running cmd: %s with PATH: %s file: %s", cmd, PATH, file)
       exec(cmd, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}}, this)
     },
     function(err, stdout, stderr) {
