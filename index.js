@@ -46,6 +46,7 @@ function writeFiles(privKey, file, keyMode, cb) {
       console.log("data: %s file: %s", data, file)
       fs.writeFile(file, data, this.parallel())
       fs.writeFile(keyfile, privKey, this.parallel())
+      console.log("does os.tmpDir() exist: %s", fs.existsSync(os.tmpDir()))
     },
     function(err) {
       if (err) {
