@@ -17,7 +17,9 @@ function mkTempFile(prefix, suffix) {
     var file = path.join(os.tmpDir(), name)
     // Hack for weird environments (nodejitsu didn't guarantee os.tmpDir() to already exist)
     console.log("creating tmpDir")
-    fs.mkdirSync(os.tmpDir())
+    try {
+        fs.mkdirSync(os.tmpDir())
+    } catch (e) {}
 
     return file
 }
