@@ -1,11 +1,14 @@
 var crypto = require('crypto')
-var exec = require('child_process').exec
+var EventEmitter = require('events').EventEmitter
 var fs = require('fs')
 var path = require('path')
 var os = require('os')
+var spawn = require('child_process').spawn
 var Step = require('step')
 
 var PATH = process.env.PATH
+
+var emitter//= new EventEmitter()
 
 // Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
@@ -76,13 +79,30 @@ function writeFiles(privKey, file, keyMode, cb) {
 // *baseDir* current working dir from which to execute git
 // *privKey* SSH private key to use
 // *cmd* command to run
+// *keyMode* optional unix file mode of key
 // *cb* callback function of signature function(err, stdout, stderr)
 //
+// or first argument may be an object with params same as above,
+// with addition of *emitter* which is an EventEmitter for real-time stdout and stderr events.
 function run(baseDir, privKey, cmd, keyMode, cb) {
   if (typeof(keyMode) === 'function') {
     cb = keyMode
     keyMode = 0600
   }
+
+  if (typeof(baseDir) === 'object') {
+    var opts = baseDir
+    cb = privKey
+    cmd = opts.cmd
+    privKey = opts.privKey
+    keyMode = opts.keyMode || 0600
+    emitter = opts.emitter
+    baseDir = opts.baseDir
+  }
+
+  var split = cmd.split(/\s+/)
+  var cmd = split[0]
+  var args = split.slice(1)
 
   Step(
     function() {
@@ -95,7 +115,34 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       }
       this.file = file
       this.keyfile = keyfile
-      exec(cmd, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}}, this)
+      var proc = spawn(cmd, args, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}})
+      proc.stdoutBuffer = ""
+      proc.stderrBuffer = ""
+      proc.stdout.setEncoding('utf8')
+      proc.stderr.setEncoding('utf8')
+
+      proc.stdout.on('data', function(buf) {
+        if (typeof(emitter) === 'object') {
+          emitter.emit('stdout', buf)
+        }
+        proc.stdoutBuffer += buf
+      })
+
+      proc.stderr.on('data', function(buf) {
+        if (typeof(emitter) === 'object') {
+          emitter.emit('stderr', buf)
+        }
+        proc.stderrBuffer += buf
+      })
+
+      var self = this
+      proc.on('close', function(exitCode) {
+        var err = null
+        if (exitCode !== 0) {
+          err = "process exited with status " + exitCode
+        }
+        self(err, proc.stdoutBuffer, proc.stderrBuffer)
+      })
     },
     function(err, stdout, stderr) {
       // cleanup temp files
@@ -105,7 +152,6 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       } catch(e) {}
 
       cb(err, stdout, stderr)
-
     }
   )
 }

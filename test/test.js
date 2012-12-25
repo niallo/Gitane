@@ -121,6 +121,25 @@ describe('gitane', function() {
 
     })
 
+    it('should support event emitter parameter for real-time updates', function(done) {
+      var testkey = 'testkey'
+      var gotStdout = false
+      function mockEmit(ev, data) {
+        console.log("emitter")
+        if (ev === 'stdout') {
+            gotStdout = true
+            expect(fs.realpathSync(data.trim())).to.eql(fs.realpathSync(os.tmpDir()))
+        }
+      }
+      var opts = {emitter: {emit:mockEmit}, baseDir:os.tmpDir(), privKey: testkey, cmd:'pwd'}
+      gitane.run(opts, function(err, stdout, stderr) {
+        expect(err).to.be.null
+        expect(fs.realpathSync(stdout.trim())).to.eql(fs.realpathSync(os.tmpDir()))
+        expect(gotStdout).to.be.true
+        done()
+      })
+    })
+
   })
 
 })
