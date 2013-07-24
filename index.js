@@ -145,11 +145,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
 
       var self = this
       proc.on('close', function(exitCode) {
-        var err = null
-        if (exitCode !== 0) {
-          err = "process exited with status " + exitCode
-        }
-        self(err, proc.stdoutBuffer, proc.stderrBuffer)
+        self(exitCode, proc.stdoutBuffer, proc.stderrBuffer)
       })
     },
     function(err, stdout, stderr) {
