@@ -83,8 +83,13 @@ function writeFiles(privKey, file, keyMode, cb) {
 // *cb* callback function of signature function(err, stdout, stderr)
 //
 // or first argument may be an object with params same as above,
-// with addition of *emitter* which is an EventEmitter for real-time stdout and stderr events.
+// with addition of *emitter* which is an EventEmitter for real-time stdout
+// and stderr events. An optional *detached* option specifies whether the 
+// spawned process should be detached from this one, and defaults to true.
+// Detachment means the git process won't hang trying to prompt for a password.
 function run(baseDir, privKey, cmd, keyMode, cb) {
+  var emitter = null
+    , detached = true
   if (typeof(keyMode) === 'function') {
     cb = keyMode
     keyMode = 0600
@@ -98,6 +103,9 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     keyMode = opts.keyMode || 0600
     emitter = opts.emitter
     baseDir = opts.baseDir
+    if (typeof(opts.detached) !== 'undefined') {
+      detached = opts.detached
+    }
   }
 
   var split = cmd.split(/\s+/)
@@ -115,7 +123,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       }
       this.file = file
       this.keyfile = keyfile
-      var proc = spawn(cmd, args, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}})
+      var proc = spawn(cmd, args, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}, detached: detached})
       proc.stdoutBuffer = ""
       proc.stderrBuffer = ""
       proc.stdout.setEncoding('utf8')
