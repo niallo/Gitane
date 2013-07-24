@@ -3,6 +3,8 @@ Gitane
 
 ![Gitane bicycle](http://farm4.staticflickr.com/3387/3593701411_2152a1cf73_z.jpg)
 
+[![Build Status](https://travis-ci.org/niallo/Gitane.png)](https://travis-ci.org/niallo/Gitane)
+
 Easy Node.JS Git wrapper with support for SSH keys. By default, the Git CLI
 tool will only use the SSH key of the current user (e.g. `$HOME/.ssh/id_dsa`).
 
