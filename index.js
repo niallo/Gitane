@@ -8,7 +8,7 @@ var Step = require('step')
 
 var PATH = process.env.PATH
 
-var emitter//= new EventEmitter()
+var emitter
 
 // Template string for wrapper script.
 var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
