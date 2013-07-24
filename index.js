@@ -88,8 +88,7 @@ function writeFiles(privKey, file, keyMode, cb) {
 // spawned process should be detached from this one, and defaults to true.
 // Detachment means the git process won't hang trying to prompt for a password.
 function run(baseDir, privKey, cmd, keyMode, cb) {
-  var emitter = null
-    , detached = true
+  var detached = true
   if (typeof(keyMode) === 'function') {
     cb = keyMode
     keyMode = 0600
@@ -149,17 +148,17 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
         if (exitCode !== 0) {
           err = "process exited with status " + exitCode
         }
-        self(err, proc.stdoutBuffer, proc.stderrBuffer)
+        self(err, proc.stdoutBuffer, proc.stderrBuffer, exitCode)
       })
     },
-    function(err, stdout, stderr) {
+    function(err, stdout, stderr, exitCode) {
       // cleanup temp files
       try {
         fs.unlink(this.file)
         fs.unlink(this.keyfile)
       } catch(e) {}
 
-      cb(err, stdout, stderr)
+      cb(err, stdout, stderr, exitCode)
     }
   )
 }
