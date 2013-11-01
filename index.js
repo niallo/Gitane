@@ -150,6 +150,10 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
         }
         self(err, proc.stdoutBuffer, proc.stderrBuffer, exitCode)
       })
+      proc.on('error', function (err) {
+        // prevent node from throwing an error. The error handling is
+        // done in the 'close' handler.
+      })
     },
     function(err, stdout, stderr, exitCode) {
       // cleanup temp files
