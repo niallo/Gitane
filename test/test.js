@@ -27,6 +27,14 @@ describe('gitane', function() {
       })
     })
 
+    it('should correctly handle failed commands', function (done) {
+      gitane.run(os.tmpDir(), 'testkey', 'notarealcommand', function (err, stdout, stderr, exitCode) {
+        expect(err).to.be.ok
+        expect(exitCode).to.be.ok
+        done()
+      })
+    })
+
   }),
 
   describe('#writeFiles', function() {
