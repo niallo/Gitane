@@ -89,6 +89,7 @@ function writeFiles(privKey, file, keyMode, cb) {
 // Detachment means the git process won't hang trying to prompt for a password.
 function run(baseDir, privKey, cmd, keyMode, cb) {
   var detached = true
+  var spawnFn = spawn
   if (typeof(keyMode) === 'function') {
     cb = keyMode
     keyMode = 0600
@@ -102,6 +103,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     keyMode = opts.keyMode || 0600
     emitter = opts.emitter
     baseDir = opts.baseDir
+    spawnFn = opts.spawn || spawn
     if (typeof(opts.detached) !== 'undefined') {
       detached = opts.detached
     }
@@ -122,7 +124,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
       }
       this.file = file
       this.keyfile = keyfile
-      var proc = spawn(cmd, args, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}, detached: detached})
+      var proc = spawnFn(cmd, args, {cwd: baseDir, env: {GIT_SSH: file, PATH:PATH}, detached: detached})
       proc.stdoutBuffer = ""
       proc.stderrBuffer = ""
       proc.stdout.setEncoding('utf8')
