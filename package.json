@@ -4,13 +4,18 @@
   "description": "Easy Node.JS Git wrapper with support for SSH keys",
   "version": "0.3.1",
   "homepage": "https://github.com/niallo/Gitane",
-  "keywords":["git", "ssh", "strider"],
+  "keywords": [
+    "git",
+    "ssh",
+    "strider"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/niallo/Gitane.git"
   },
   "main": "index.js",
   "dependencies": {
+    "npm-path": "^1.0.1",
     "step": "~0.0.5"
   },
   "devDependencies": {
