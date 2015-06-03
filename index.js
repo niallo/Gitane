@@ -2,11 +2,12 @@ var crypto = require('crypto')
 var EventEmitter = require('events').EventEmitter
 var fs = require('fs')
 var path = require('path')
+var npmPath = require('npm-path')
 var os = require('os')
 var spawn = require('child_process').spawn
 var Step = require('step')
 
-var PATH = process.env.PATH
+var PATH = npmPath.PATH
 
 var emitter
 
@@ -177,7 +178,7 @@ function clone(args, baseDir, privKey, cb) {
 }
 
 function addPath(str) {
-  PATH = PATH + ":" + str
+  PATH = PATH + npmPath.SEPARATOR + str
 }
 
 module.exports = {
