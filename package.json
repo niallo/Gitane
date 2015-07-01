@@ -15,7 +15,6 @@
   },
   "main": "index.js",
   "dependencies": {
-    "npm-path": "^1.0.1",
     "step": "~0.0.5"
   },
   "devDependencies": {

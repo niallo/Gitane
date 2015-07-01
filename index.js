@@ -2,12 +2,13 @@ var crypto = require('crypto')
 var EventEmitter = require('events').EventEmitter
 var fs = require('fs')
 var path = require('path')
-var npmPath = require('npm-path')
 var os = require('os')
 var spawn = require('child_process').spawn
 var Step = require('step')
 
-var PATH = npmPath.PATH
+var isWindows = /^win/.test(process.platform)
+var PATH = isWindows ? process.env.Path : process.env.PATH;
+var SEPARATOR = isWindows ? ';' : ':';
 
 var emitter
 
@@ -47,8 +48,12 @@ function writeFiles(privKey, file, keyMode, cb) {
   }
 
   var keyfile = mkTempFile("_gitaneid", ".key")
+  var keyfileName = keyfile
+  if (isWindows) {
+    keyfileName = "\"" + keyfile.replace(/\\/g,"\\\\") + "\"";
+  }
 
-  var data = GIT_SSH_TEMPLATE.replace('$key', keyfile)
+  var data = GIT_SSH_TEMPLATE.replace('$key', keyfileName)
   Step(
     function() {
       fs.writeFile(file, data, this.parallel())
@@ -178,7 +183,7 @@ function clone(args, baseDir, privKey, cb) {
 }
 
 function addPath(str) {
-  PATH = PATH + npmPath.SEPARATOR + str
+  PATH = PATH + SEPARATOR + str
 }
 
 module.exports = {
