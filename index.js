@@ -115,7 +115,7 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     }
   }
 
-  var split = cmd.split(/\s+/)
+  var split = cmd.match(/"[^"]+"|'[^']+'|\S+/g)
   var cmd = split[0]
   var args = split.slice(1)
 
