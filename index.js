@@ -115,9 +115,16 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     }
   }
 
-  var split = cmd.match(/"[^"]+"|'[^']+'|\S+/g)
-  var cmd = split[0]
-  var args = split.slice(1)
+  var args;
+  if (Array.isArray(cmd)) {
+    args = cmd.slice(1);
+    cmd = cmd[0];
+  }
+  else {
+    var split = cmd.match(/"[^"]+"|'[^']+'|\S+/g)
+    cmd = split[0]
+    args = split.slice(1)
+  }
 
   Step(
     function() {
