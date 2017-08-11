@@ -19,10 +19,10 @@ var GIT_SSH_TEMPLATE = '#!/bin/sh\n' +
 function mkTempFile(prefix, suffix) {
     var randomStr = crypto.randomBytes(4).toString('hex')
     var name = prefix + randomStr + suffix
-    var file = path.join(os.tmpDir(), name)
-    // Hack for weird environments (nodejitsu didn't guarantee os.tmpDir() to already exist)
+    var file = path.join(os.tmpdir(), name)
+    // Hack for weird environments (nodejitsu didn't guarantee os.tmpdir() to already exist)
     try {
-        fs.mkdirSync(os.tmpDir())
+        fs.mkdirSync(os.tmpdir())
     } catch (e) {}
 
     return file
@@ -173,8 +173,8 @@ function run(baseDir, privKey, cmd, keyMode, cb) {
     function(err, stdout, stderr, exitCode) {
       // cleanup temp files
       try {
-        fs.unlink(this.file)
-        fs.unlink(this.keyfile)
+        fs.unlinkSync(this.file)
+        fs.unlinkSync(this.keyfile)
       } catch(e) {}
 
       cb(err, stdout, stderr, exitCode)
